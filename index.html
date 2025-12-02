@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Purdue Study Spaces</title>
+		<link rel="icon" type="image/x-icon" href="purduelogo.ico"></link>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		
+		<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.css"
+			integrity="sha256-cxGB1ADWWosJ2EL1W3C8TcEQELFbhUnixlpp0jP73S4="
+			crossorigin=""/>
+		
+		<style>
+			html, body {
+				margin: 0;
+				padding: 0;
+				height: 100%;
+				background-color: #CFB991;
+				font-family: Arial;
+			}
+			
+			#map {
+				position: absolute;
+				top: 66px;
+				bottom: 0;
+				width: 100%;
+			}
+			
+			#top {
+				width: 100%;
+				height: 64px;
+				border-top: 2px solid #CFB991;
+				background-color: #000;
+				color: white;
+				display: flex;
+				padding-left: 24px;
+				padding-right: 24px;
+				font-size: 20px;
+				position: fixed;
+				align-items: center;
+				flex-flow: row nowrap;
+				flex: 1 1 auto;
+				top: 0;
+				left: 0;
+				z-index: 9999;
+				box-shadow: -5px 2.5px 2.5px #00000077;
+			}
+			
+			.custom-marker {
+				width: 11px;
+				height: 11px;
+				background-color: white;
+				border: 7px solid #757575;
+				border-radius: 50%;
+				box-shadow: 0 0 8px #000000BB;
+			}
+			
+			.purdue-logo {
+				background: url(https://www.purdue.edu/purdue/images/PU-H.svg) no-repeat;
+				background-size: contain;
+				display: block;
+				height: 35%;
+				width: 100%;
+				max-width: 125px;
+				margin: auto 15px auto 0;
+				overflow: hidden;
+				text-indent: -9999px;
+			}
+
+			/* Preferences popup styling */
+    	    #preferences-popup {
+	            display: none;
+            	position: fixed;
+        	    top: 66px;
+    	        right: 20px;
+	            width: 300px;
+            	background-color: #fff;
+        	    border: 2px solid #000;
+    	        border-radius: 10px;
+	            padding: 15px;
+            	z-index: 10000;
+        	    box-shadow: 0 0 10px #00000077;
+    	    }
+
+	        #preferences-popup h3 {
+            	margin-top: 0;
+        	}
+
+        	#preferences-popup select, #preferences-popup input {
+        	    width: 100%;
+    	        padding: 5px;
+	            margin-top: 5px;
+            	margin-bottom: 10px;
+        	}
+
+    	    #preferences-btn {
+        	    margin-left: auto;
+				margin-right: 30px;
+            	cursor: pointer;
+            	font-size: 32px;
+        	}
+		</style>
+	</head>
+	<body>
+		<div id="top">
+			<span class="purdue-logo">PU Logo</span>
+			<p>Study Spaces</p>
+			<span id="preferences-btn" title="Preferences" >⚙️</span>
+		</div>
+		
+		<div id="map"></div>
+		
+		<!-- Preferences Popup -->
+		<div id="preferences-popup">
+			<h3>Preferences</h3>
+			<label>Light Level:</label>
+			<select id="pref-light">
+				<option value="3">☀️ Bright</option>
+				<option value="2">🌤️ Well-Lit</option>
+				<option value="1">⛅ Moody</option>
+				<option value="0">☁️ Dark</option>
+			</select>
+			<label>Sound Level:</label>
+			<select id="pref-sound">
+				<option value="0">🔇 Quiet</option>
+				<option value="1">🔈 Medium-Quiet</option>
+				<option value="2">🔉 Medium-Loud</option>
+				<option value="3">🔊 Loud</option>
+			</select>
+			<label>Max Occupancy:</label>
+			<input type="number" id="pref-occupancy" placeholder="e.g., 200">
+			<label>Priority:</label>
+			<select id="pref-priority">
+				<option value="light">Light</option>
+				<option value="sound">Sound</option>
+				<option value="occupancy">Occupancy</option>
+			</select>
+			<button id="pref-save">Save Preferences</button>
+			<div id="pref-message" style="color:green; margin-top:5px; display:none;"></div>
+		</div>
+
+		<!-- Include MapLibre GL Javascript -->
+		<script src="https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.js"
+			integrity="sha256-HEgGTc9sxgksv4r2DvQT16zDV/OBUDoXVwGZjXPRnk0="
+			crossorigin="">
+		</script>
+		
+		<script src="places.js"></script>
+		<script src="map.js"></script>
+	</body>
+</html>
+
