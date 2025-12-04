@@ -65,7 +65,9 @@ map.on("load", () => {
 				<em style="font-size: 12px; margin-bottom: 10px;">${PLACES[i][4]}</em><br><br>
 				<strong>${occupancyIcon} Occupancy:</strong> ${Math.floor(occupancy * PLACES[i][3])}/${PLACES[i][3]}<br>
 				<strong>🌡️ Light-Level:</strong> ${lightIcons[lightIndex]} ${lightScale[lightIndex]}<br>
-				<strong>🔊 Sound-Level:</strong> ${noiseIcons[noiseIndex]} ${noiseScale[noiseIndex]}
+				<strong>🔊 Sound-Level:</strong> ${noiseIcons[noiseIndex]} ${noiseScale[noiseIndex]}<br>
+				<strong>🚶 Approx. walk time:</strong>
+			 <span class="walk-time">Calculating...</span>
 			</div>
 		`;
 
@@ -87,8 +89,51 @@ map.on("load", () => {
 			maxOccupancy: 1
 		});
 
+		// Function to calculate walk time
+		function getWalkTime(from, to) {
+			if (!from) return "Unknown";
+
+			const R = 6371e3; // radius of Earth in meters
+			const toRad = (v) => (v * Math.PI) / 180;
+
+			const lat1 = toRad(from[1]);
+			const lat2 = toRad(to[1]);
+			const dLat = toRad(to[1] - from[1]);
+			const dLon = toRad(to[0] - from[0]);
+
+			// Haversine distance
+			const a =
+				Math.sin(dLat / 2) ** 2 +
+				Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+
+			const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+			const distance = R * c; // meters
+
+			const walkSpeed = 1.4; // m/s (5km/h average)
+			const seconds = distance / walkSpeed;
+
+			// Format time
+			if (seconds < 60) return "<1 min";
+			const minutes = Math.round(seconds / 60);
+			return `${minutes} min`;
+		}
+
 		// Attach click listener **when popup opens**
 		popup.on("open", () => {
+			// Insert walk time into popup
+			const popupEl = popup.getElement();
+			if (popupEl) {
+				let time = "Unknown";
+				if (userLocation) {
+					time = getWalkTime(
+						userLocation,
+						[PLACES[i][2], PLACES[i][1]]
+					);
+				}
+				const walkSpan = popupEl.querySelector('.walk-time');
+				if (walkSpan) walkSpan.innerText = time;
+			}
+
 			const heartBtn = popup.getElement().querySelector(".heart-btn");
 			if (!heartBtn) return;
 
@@ -141,6 +186,12 @@ map.on("load", () => {
 	});
 	map.addControl(geoLoc);
 	geoLoc.on("trackuserlocationstart", () => { geoLoc.trigger() });
+
+	let userLocation = null;
+
+	geoLoc.on("geolocate", (pos) => {
+		userLocation = [pos.coords.longitude, pos.coords.latitude];
+	});
 
 	// Preferences button functionality
 	const prefBtn = document.getElementById("preferences-btn");
