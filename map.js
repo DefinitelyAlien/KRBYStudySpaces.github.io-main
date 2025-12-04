@@ -10,7 +10,6 @@ const map = new maplibregl.Map({
 let preferences = JSON.parse(localStorage.getItem("preferences")) || {
 	light: null,
 	sound: null,
-	occupancy: null,
 	priority: "occupancy"
 };
 
@@ -84,8 +83,8 @@ map.on("load", () => {
 			heartMarker: heartMarker,
 			lightIndex: lightIndex,
 			noiseIndex: noiseIndex,
-			occupancy: Math.floor(occupancy * PLACES[i][3]),
-			maxOccupancy: PLACES[i][3]
+			occupancy: occupancy / 1,
+			maxOccupancy: 1
 		});
 
 		// Attach click listener **when popup opens**
@@ -125,9 +124,8 @@ map.on("load", () => {
 			if (preferences.sound !== null)
 				score += Math.abs(mObj.noiseIndex - preferences.sound) * soundWeight;
 
-			if (preferences.occupancy !== null)
-				score += (Math.abs(mObj.occupancy - preferences.occupancy) / mObj.maxOccupancy * 3) * occupancyWeight;
-
+			score += (mObj.occupancy) * 3 * occupancyWeight;
+			
 			// Set opacity based on weighted score
 			if (score >= 6) mObj.element.style.opacity = 0.25;
 			else if (score >= 4) mObj.element.style.opacity = 0.7;
@@ -153,14 +151,12 @@ map.on("load", () => {
 		// Populate current preferences
 		document.getElementById("pref-light").value = preferences.light !== null ? preferences.light : 0;
 		document.getElementById("pref-sound").value = preferences.sound !== null ? preferences.sound : 0;
-		document.getElementById("pref-occupancy").value = preferences.occupancy !== null ? preferences.occupancy : "";
 		document.getElementById("pref-priority").value = preferences.priority;
 	};
 
 	document.getElementById("pref-save").onclick = () => {
 		preferences.light = parseInt(document.getElementById("pref-light").value);
 		preferences.sound = parseInt(document.getElementById("pref-sound").value);
-		preferences.occupancy = document.getElementById("pref-occupancy").value ? parseInt(document.getElementById("pref-occupancy").value) : null;
 		preferences.priority = document.getElementById("pref-priority").value;
 		localStorage.setItem("preferences", JSON.stringify(preferences));
 		
