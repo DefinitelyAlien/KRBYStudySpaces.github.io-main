@@ -20,6 +20,12 @@ let favorites = JSON.parse(localStorage.getItem("favorites")) || {};
 let allMarkers = [];
 
 map.on("load", () => {
+	let studySessions = [
+		{ name: "Hicks Quiet Room", people: 4, topic: "Calculus Study" },
+		{ name: "Stewart – Basement", people: 2, topic: "Chem Lab Review" },
+		{ name: "WALC Booths", people: 6, topic: "CS251 Group Work" }
+	];
+
 	for (let i = 0; i < PLACES.length; i++) {
 		let occupancy = Math.random();
 
@@ -89,6 +95,22 @@ map.on("load", () => {
 			maxOccupancy: 1
 		});
 
+		function refreshStudySessions() {
+			const list = document.getElementById("sessions-list");
+			list.innerHTML = "";
+
+			studySessions.forEach(s => {
+				const div = document.createElement("div");
+				div.className = "session-entry";
+				div.innerHTML = `
+			<strong>${s.name}</strong><br>
+			👥 ${s.people} people<br>
+			📘 ${s.topic}
+		`;
+				list.appendChild(div);
+			});
+		}
+
 		// Function to calculate walk time
 		function getWalkTime(from, to) {
 			if (!from) return "Unknown";
@@ -117,6 +139,21 @@ map.on("load", () => {
 			const minutes = Math.round(seconds / 60);
 			return `${minutes} min`;
 		}
+
+		const sessionsTab = document.getElementById("sessions-tab");
+		const sessionsPanel = document.getElementById("sessions-panel");
+		let sessionsOpen = false;
+
+		sessionsTab.onclick = () => {
+			sessionsOpen = !sessionsOpen;
+
+			if (sessionsOpen) {
+				sessionsPanel.style.right = "0";
+				refreshStudySessions();
+			} else {
+				sessionsPanel.style.right = "-350px";
+			}
+		};
 
 		// Attach click listener **when popup opens**
 		popup.on("open", () => {
