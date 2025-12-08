@@ -21,9 +21,46 @@ let allMarkers = [];
 
 map.on("load", () => {
 	let studySessions = [
-		{ name: "Hicks Quiet Room", people: 4, topic: "Calculus Study" },
-		{ name: "Stewart – Basement", people: 2, topic: "Chem Lab Review" },
-		{ name: "WALC Booths", people: 6, topic: "CS251 Group Work" }
+		{
+			name: "WALC — 2nd Floor Tables",
+			people: 7,
+			topic: "Calc 3 Study Group"
+		},
+		{
+			name: "Hicks Quiet Room",
+			people: 4,
+			topic: "Calculus I Homework Review"
+		},
+		{
+			name: "Stewart — Basement",
+			people: 3,
+			topic: "Organic Chemistry Problem Set"
+		},
+		{
+			name: "Black Cultural Center Lounge",
+			people: 5,
+			topic: "CS 180 Exam Prep"
+		},
+		{
+			name: "PMU Starbucks Seating",
+			people: 2,
+			topic: "PHYS 172 Notes Review"
+		},
+		{
+			name: "Lilly Library Quiet Zone",
+			people: 1,
+			topic: "ENGL 234 Reading Session"
+		},
+		{
+			name: "WALC — Collaboration Rooms",
+			people: 6,
+			topic: "CS 251 Group Work"
+		},
+		{
+			name: "Mechanical Engineering Building Atrium",
+			people: 3,
+			topic: "ENGR 132 Project Discussion"
+		}
 	];
 
 	for (let i = 0; i < PLACES.length; i++) {
@@ -151,7 +188,7 @@ map.on("load", () => {
 				sessionsPanel.style.right = "0";
 				refreshStudySessions();
 			} else {
-				sessionsPanel.style.right = "-350px";
+				sessionsPanel.style.right = "-400px";
 			}
 		};
 
