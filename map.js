@@ -21,47 +21,62 @@ let allMarkers = [];
 
 map.on("load", () => {
 	let studySessions = [
-		{
-			name: "WALC — 2nd Floor Tables",
-			people: 7,
-			topic: "Calc 3 Study Group"
-		},
-		{
-			name: "Hicks Quiet Room",
-			people: 4,
-			topic: "Calculus I Homework Review"
-		},
-		{
-			name: "Stewart — Basement",
-			people: 3,
-			topic: "Organic Chemistry Problem Set"
-		},
-		{
-			name: "Black Cultural Center Lounge",
-			people: 5,
-			topic: "CS 180 Exam Prep"
-		},
-		{
-			name: "PMU Starbucks Seating",
-			people: 2,
-			topic: "PHYS 172 Notes Review"
-		},
-		{
-			name: "Lilly Library Quiet Zone",
-			people: 1,
-			topic: "ENGL 234 Reading Session"
-		},
-		{
-			name: "WALC — Collaboration Rooms",
-			people: 6,
-			topic: "CS 251 Group Work"
-		},
-		{
-			name: "Mechanical Engineering Building Atrium",
-			people: 3,
-			topic: "ENGR 132 Project Discussion"
-		}
+		{ name: "WALC — 2nd Floor Tables", people: 7, topic: "Calc 3 Study Group" },
+		{ name: "Hicks Quiet Room", people: 4, topic: "Calculus I Homework Review" },
+		{ name: "Stewart — Basement", people: 3, topic: "Organic Chemistry Problem Set" },
+		{ name: "Black Cultural Center Lounge", people: 5, topic: "CS 180 Exam Prep" },
+		{ name: "PMU Starbucks Seating", people: 2, topic: "PHYS 172 Notes Review" },
+		{ name: "Lilly Library Quiet Zone", people: 1, topic: "ENGL 234 Reading Session" },
+		{ name: "WALC — Collaboration Rooms", people: 6, topic: "CS 251 Group Work" },
+		{ name: "Mechanical Engineering Building Atrium", people: 3, topic: "ENGR 132 Project Discussion" }
 	];
+
+	function refreshStudySessions() {
+		const list = document.getElementById("sessions-list");
+		if (!list) return;
+		list.innerHTML = "";
+
+		studySessions.forEach(s => {
+			const div = document.createElement("div");
+			div.className = "session-entry";
+			div.innerHTML = `
+			<strong>${s.name}</strong><br>
+			👥 ${s.people} people<br>
+			📘 ${s.topic}
+		`;
+			list.appendChild(div);
+		});
+	}
+
+	// Ensure the DOM elements exist and set up toggle handlers once
+	const sessionsTab = document.getElementById("sessions-tab");
+	const sessionsPanel = document.getElementById("sessions-panel");
+	const sessionsClose = document.getElementById("sessions-close");
+
+	// Toggle function (keeps tab visible)
+	function toggleSessionsPanel(open) {
+		if (open) {
+			sessionsPanel.classList.add("open");
+			sessionsPanel.setAttribute("aria-hidden", "false");
+			refreshStudySessions();
+		} else {
+			sessionsPanel.classList.remove("open");
+			sessionsPanel.setAttribute("aria-hidden", "true");
+		}
+	}
+
+	// Click/touch listeners (desktop + mobile)
+	sessionsTab.addEventListener("click", () => toggleSessionsPanel(!sessionsPanel.classList.contains("open")));
+	sessionsTab.addEventListener("touchstart", (e) => { e.preventDefault(); toggleSessionsPanel(!sessionsPanel.classList.contains("open")); }, { passive: false });
+
+	if (sessionsClose) {
+		sessionsClose.addEventListener("click", () => toggleSessionsPanel(false));
+		sessionsClose.addEventListener("touchstart", (e) => { e.preventDefault(); toggleSessionsPanel(false); }, { passive: false });
+	}
+
+	// Prevent map drags from opening the panel unexpectedly on mobile: stop pointer events on the tab only when dragging
+	sessionsTab.addEventListener("pointerdown", () => sessionsTab.classList.add("pressing"));
+	sessionsTab.addEventListener("pointerup", () => sessionsTab.classList.remove("pressing"));
 
 	for (let i = 0; i < PLACES.length; i++) {
 		let occupancy = Math.random();
@@ -176,21 +191,6 @@ map.on("load", () => {
 			const minutes = Math.round(seconds / 60);
 			return `${minutes} min`;
 		}
-
-		const sessionsTab = document.getElementById("sessions-tab");
-		const sessionsPanel = document.getElementById("sessions-panel");
-		let sessionsOpen = false;
-
-		sessionsTab.onclick = () => {
-			sessionsOpen = !sessionsOpen;
-
-			if (sessionsOpen) {
-				sessionsPanel.style.right = "0";
-				refreshStudySessions();
-			} else {
-				sessionsPanel.style.right = "-400px";
-			}
-		};
 
 		// Attach click listener **when popup opens**
 		popup.on("open", () => {

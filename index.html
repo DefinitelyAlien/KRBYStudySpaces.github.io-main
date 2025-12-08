@@ -17,6 +17,7 @@
 				height: 100%;
 				background-color: #CFB991;
 				font-family: Arial;
+				overflow-x: hidden;
 			}
 			
 			#map {
@@ -67,45 +68,47 @@
 				text-indent: -9999px;
 			}
 
-			/* Right-side tab */
+			/* Right-side tab (keeps it visible above the panel) */
 			#sessions-tab {
-				position: absolute;
-				right: 0;
-				top: 50%;
+				position: fixed;
+				/* position vertically centered under the top bar (top bar = 64px) */
+				top: calc(50% + 32px);
+				right: 0px;
 				transform: translateY(-50%);
 				background: white;
-				padding: 12px 15px;
+				padding: 10px 12px;
 				border-radius: 10px 0 0 10px;
 				box-shadow: -2px 2px 6px rgba(0,0,0,0.25);
 				cursor: pointer;
 				font-size: 22px;
-				z-index: 9999;
+				z-index: 9999; /* ABOVE panel */
 			}
 
-			/* Slide-out panel */
+			/* Slide-out panel (anchored below the top bar so it doesn't overlap) */
 			#sessions-panel {
-				position: absolute;
-				top: 0;
-				right: -400px;
-				width: 350px;
-				height: 90%;
+				position: fixed;
+				top: 64px;               /* sit below your top bar */
+				right: -400px;           /* hidden by default (same as -width) */
+				width: 360px;
+				height: calc(100vh - 64px); /* fills from below top bar to bottom */
 				background: white;
-				box-shadow: -3px 0 10px rgba(0,0,0,0.25);
-				padding: 20px;
-				padding-top: 90px;
-				transition: right 0.3s ease;
-				z-index: 9998;
+				box-shadow: -3px 0 18px rgba(0,0,0,0.25);
+				transition: right 0.35s ease, box-shadow 0.2s;
 				overflow-y: auto;
+				z-index: 10000;
+				padding: 16px;
+				border-left: 1px solid #e6e6e6;
 			}
 
-			#sessions-panel h2 {
-				margin-top: 0;
-				font-size: 20px;
+			/* When open, slide to right: 0 */
+			#sessions-panel.open {
+				right: 0;
 			}
 
+			/* Session entries */
 			.session-entry {
-				padding: 12px;
-				border-bottom: 1px solid #ddd;
+				padding: 12px 6px;
+				border-bottom: 1px solid #eee;
 				font-size: 14px;
 			}
 
@@ -183,9 +186,19 @@
 		<div id="sessions-tab">👥</div>
 		
 		<!-- Slide-out Study Sessions Panel -->
-		<div id="sessions-panel">
-			<h2>Current Study Sessions</h2>
-			<div id="sessions-list">
+		<div id="sessions-panel" aria-hidden="true">
+			<div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+				<h2 style="margin:0; font-size:18px;">Current Study Sessions</h2>
+				<button id="sessions-close" aria-label="Close sessions panel" style="
+					background: transparent;
+					border: none;
+					font-size: 22px;
+					cursor: pointer;
+					padding: 4px 8px;
+				">✕</button>
+			</div>
+			<hr style="margin-top:10px;">
+			<div id="sessions-list" style="padding-bottom: 40px;">
 				<!-- Filled by JS -->
 			</div>
 		</div>
